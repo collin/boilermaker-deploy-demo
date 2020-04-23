@@ -27,21 +27,27 @@ jobs:
           --health-retries 5
     steps:
     # Check out repository
-    - uses: actions/checkout@v2
-    - run: git fetch --prune --tags --unshallow
+    - name: Checkout Code
+      uses: actions/checkout@v2
+    - name: Fetch Complete Repository History
+      run: git fetch --prune --tags --unshallow
     # Installs node v12
-    - name: Use Node.js
+    - name: Use Node.js Version 12
       uses: actions/setup-node@v1
       with:
         node-version: '12.x'
-    - name: Create database
+    - name: Create Test Database
       run: psql "postgres://postgres:postgres@localhost:5432" -c 'create database "test-database";'
-    - run: npm install
-    - run: npm test
+    - name: Install Node Modules
+      run: npm install
+    - name: Test
+      run: npm test
       env:
         DATABASE_URL: "postgres://postgres:postgres@localhost:5432/test-database"
     - run: git config --global user.email "no-reply@example.org"
     - run: git config --global user.name "Github Actions Deploy Script"
-    - run: npm run deploy
+    - name: Build and Deploy to Heroku
+      run: npm run deploy
       env:
+        HEROKU_APP_NAME: blooming-reaches-38374
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
