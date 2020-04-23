@@ -43,4 +43,16 @@ git add -f public/bundle.js public/bundle.js.map
 git commit --allow-empty -m 'Deploying'
 
 # push your local "deploy" branch to the "master" branch on heroku
-git push --force https://heroku:$HEROKU_API_KEY@git.heroku.com/blooming-reaches-38374.git deploy:master
+# if HEROKU_API_KEY is set this script assumes
+if [[ -z "${HEROKU_API_KEY}"]]; then
+  git push --force heroku deploy:master
+else
+  if [[ -z "${HEROKU_APP_NAME}" ]]; then
+    echo "If deploying via github actions, two environment variables MUST be set"
+    echo "  1: HEROKU_API_KEY"
+    echo "  2: HEORKU_APP_NAME"
+    exit 1
+  else
+    git push --force "https://heroku:${HEROKU_API_KEY}@git.heroku.com/${HEROKU_APP_NAME}.git" deploy:master
+  fi
+fi
