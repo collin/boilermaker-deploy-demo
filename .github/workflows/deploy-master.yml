@@ -36,7 +36,6 @@ jobs:
     - name: Create database
       run: psql "postgres://postgres:postgres@localhost:5432" -c 'create database "test-database";'
     - run: npm install
-    - run: npm run build-client
     - run: npm test
       env:
         DATABASE_URL: "postgres://postgres:postgres@localhost:5432/test-database"
