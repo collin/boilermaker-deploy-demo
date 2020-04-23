@@ -44,10 +44,12 @@ git commit --allow-empty -m 'Deploying'
 
 # push your local "deploy" branch to the "master" branch on heroku
 # if HEROKU_API_KEY is set this script assumes
-if [[ -z "${HEROKU_API_KEY}"]]; then
+if [[ -z "${HEROKU_API_KEY}" ]]
+then
   git push --force heroku deploy:master
 else
-  if [[ -z "${HEROKU_APP_NAME}" ]]; then
+  if [[ -z "${HEROKU_APP_NAME}" ]]
+  then
     echo "If deploying via github actions, two environment variables MUST be set"
     echo "  1: HEROKU_API_KEY"
     echo "  2: HEORKU_APP_NAME"
