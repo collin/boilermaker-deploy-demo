@@ -1,0 +1,44 @@
+# This workflow is triggered on pushes to the repository.
+on: [push]
+
+jobs:
+  build:
+    # Job name is Greeting
+    name: NPM Test
+    # This job runs on Linux
+    runs-on: ubuntu-latest
+
+    #  NEeded services
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+    # Check out repository
+    - uses: actions/checkout@v2
+    # Installs node v12
+    - name: Use Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+    - name: Create database
+      run: psql "postgres://postgres:postgres@localhost:5432" -c 'create database "test-database";'
+    - run: npm install
+    - run: npm run build-client
+    - run: npm test
+      env:
+        DATABASE_URL: "postgres://postgres:postgres@localhost:5432/test-database"
+
