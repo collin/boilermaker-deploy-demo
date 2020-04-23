@@ -1,11 +1,11 @@
-# This workflow is triggered on pushes to the repository.
+name: Run Tests For Pull Requests
 on:
   push:
     branches-ignore:
       - master
 
 jobs:
-  build:
+  test:
     # Job name is Greeting
     name: NPM Test
     # This job runs on Linux
@@ -31,17 +31,27 @@ jobs:
           --health-retries 5
     steps:
     # Check out repository
-    - uses: actions/checkout@v2
-    # Installs node v12
-    - name: Use Node.js
+    - name: Clone Source Code
+      uses: actions/checkout@v2
+
+    - name: Use Node.js Version 12
       uses: actions/setup-node@v1
       with:
         node-version: '12.x'
-    - name: Create database
+
+    - name: Create Test Database
       run: psql "postgres://postgres:postgres@localhost:5432" -c 'create database "test-database";'
-    - run: npm install
-    - run: npm run build-client
-    - run: npm test
+
+    - name: Install NPM Modules
+      run: npm install
+
+    - name: Build Webpack Bundle
+      run: npm run build-client
+
+    - name: Tests
+      run: npm test
       env:
         DATABASE_URL: "postgres://postgres:postgres@localhost:5432/test-database"
 
+    - name: Linter
+      run: npm run lint
