@@ -42,7 +42,6 @@ jobs:
     - run: heroku git:remote -a blooming-reaches-38374
     - run:  git config --global user.email "no-reply@example.org"
     - run: git config --global user.name "Github Actions Deploy Script"
-    - run: heroku login
       env:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
     - run: npm run deploy
